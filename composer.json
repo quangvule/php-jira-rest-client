@@ -1,6 +1,6 @@
 {
-    "name": "lesstif/php-jira-rest-client",
-    "description": "JIRA REST API Client for PHP Users.",
+    "name": "quangvule/php-jira-rest-client",
+    "description": "JIRA REST API Client for PHP Users. (Fixed Auth header)",
     "type": "library",
     "keywords": ["jira", "rest", "jira-php", "jira-rest"],
     "require": {

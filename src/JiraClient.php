@@ -60,6 +60,13 @@ class JiraClient
      * @var string
      */
     protected $cookie = 'jira-cookies.txt';
+	
+	/**
+     * request headers.
+     *
+     * @var array
+     */
+	protected $headers = [];
 
     /**
      * Constructor.
@@ -87,6 +94,12 @@ class JiraClient
         // Fix "\JiraRestApi\JsonMapperHelper::class" syntax error, unexpected 'class' (T_CLASS), expecting identifier (T_STRING) or variable (T_VARIABLE) or '{' or '$'
         $this->json_mapper->undefinedPropertyHandler = [new \JiraRestApi\JsonMapperHelper(), 'setUndefinedProperty'];
 
+		// Set Auth headers
+		$username = $this->getConfiguration()->getJiraUser();
+        $password = $this->getConfiguration()->getJiraPassword();
+        $encodedAuth = base64_encode($username.':'.$password);
+		$this->headers[] = "Authorization : Basic ".$encodedAuth;
+		
         // create logger
         if ($logger) {
             $this->log = $logger;
@@ -209,8 +222,11 @@ class JiraClient
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         }
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER,
-            ['Accept: */*', 'Content-Type: application/json', 'X-Atlassian-Token: no-check']);
+		$_headers = $this->headers;
+		$_headers[] = 'Accept: */*';
+		$_headers[] = 'Content-Type: application/json';
+		$_headers[] = 'X-Atlassian-Token: no-check';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $_headers);
 
         curl_setopt($ch, CURLOPT_VERBOSE, $this->getConfiguration()->isCurlOptVerbose());
 
